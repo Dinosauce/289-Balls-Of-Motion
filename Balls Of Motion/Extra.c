@@ -1,6 +1,6 @@
 #include "Extra.h"
 
-float ClampF(float min, float max, float point)
+float clampF(float min, float max, float point)
 {
     if (point < min)
         point = min;

@@ -10,6 +10,6 @@
 
     typedef vect3 vert4[4];
 
-	float ClampF(float min, float max, float point);
+	float clampF(float min, float max, float point);
 
 #endif // EXTRA_H

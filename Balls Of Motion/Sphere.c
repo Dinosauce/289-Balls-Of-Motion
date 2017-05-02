@@ -21,6 +21,7 @@ void animate(Sphere* s, int tick)
     s->center[2] += s->direction[2] * time;
 }
 
+//TODO: Rewrite, dont need to recreate sphere every frame
 void draw()
 {
     int slices = 20;

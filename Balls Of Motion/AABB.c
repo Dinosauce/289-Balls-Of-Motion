@@ -18,9 +18,9 @@ void setNormal(AABB* aabb, float x, float y, float z)
     aabb->normal[2] = z;
 }
 
-void Clamp(AABB* aabb, vect3 point, vect3 out)
+void clamp(AABB* aabb, vect3 point, vect3 out)
 {
-	out[0] = ClampF(aabb->pMin[0], aabb->pMax[0], point[0]);
-	out[1] = ClampF(aabb->pMin[1], aabb->pMax[1], point[1]);
-	out[2] = ClampF(aabb->pMin[2], aabb->pMax[2], point[2]);
+	out[0] = clampF(aabb->pMin[0], aabb->pMax[0], point[0]);
+	out[1] = clampF(aabb->pMin[1], aabb->pMax[1], point[1]);
+	out[2] = clampF(aabb->pMin[2], aabb->pMax[2], point[2]);
 }

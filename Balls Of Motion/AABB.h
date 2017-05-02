@@ -23,6 +23,6 @@ typedef struct{
     void setAABB(AABB* newAABB, float xMin, float yMin, float zMin, float xMax, float yMax, float zMax);
     void setNormal(AABB* aabb, float x, float y, float z);
 
-	void Clamp(AABB* aabb, vect3 point, vect3 out);
+	void clamp(AABB* aabb, vect3 point, vect3 out);
 
 #endif // AABB_H
