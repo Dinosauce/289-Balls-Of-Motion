@@ -7,6 +7,9 @@
 #include "AABB.h"
 #include "Sphere.h"
 
+int distanceSA(Sphere* s, AABB* ab);
+int distanceSS(Sphere* s1, Sphere* s2);
+
 int collidesSA(Sphere* s, AABB* ab);
 int collidesSS(Sphere* s1, Sphere* s2);
 

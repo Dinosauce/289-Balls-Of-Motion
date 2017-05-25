@@ -1,12 +1,23 @@
 #include "Collision.h"
 
-int collidesSA(Sphere* s, AABB* ab)
+
+int distanceSA(Sphere* s, AABB* ab)
 {
     vect3 point;
 
     clamp(ab, s->center, point);
 
-    return distance(point, s->center) < s->radius;
+    return distance(point, s->center) - s->radius;
+}
+int distanceSS(Sphere* s1, Sphere* s2)
+{
+    return distance(s1->center, s2->center) - (s1->radius + s2->radius);
+}
+
+
+int collidesSA(Sphere* s, AABB* ab)
+{
+    return distanceSA(s, ab) < s->radius;
 }
 
 int collidesSS(Sphere* s1, Sphere* s2)
