@@ -7,12 +7,22 @@
 #include "AABB.h"
 #include "Sphere.h"
 
+/** Returns the minimum distance between to two objects
+ */
 int distanceSA(Sphere* s, AABB* ab);
+/** Returns the minimum distance between to two objects
+ */
 int distanceSS(Sphere* s1, Sphere* s2);
 
+/** Returns true when the two objects are colliding
+ */
 int collidesSA(Sphere* s, AABB* ab);
+/** Returns true when the two objects are colliding
+ */
 int collidesSS(Sphere* s1, Sphere* s2);
 
+/** Calculates the distance between the two points
+ */
 float distance(vect3 p1, vect3 p2);
 
 /** Reflect a sphere against a normal
