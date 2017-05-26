@@ -8,6 +8,7 @@ typedef struct{
     vect3 center;
     vect3 direction;
     float radius;
+    float mass;
 } Sphere;
 
     /** Initializes a sphere

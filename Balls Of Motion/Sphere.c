@@ -11,6 +11,8 @@ void setSphere(Sphere* newSphere, float x, float y, float z, float radius)
     newSphere->direction[0] = 0;
     newSphere->direction[1] = 0;
     newSphere->direction[2] = 0;
+
+    newSphere->mass = 1;
 }
 
 void setSphereVelocity(Sphere* sphere, float xv, float yv, float zv)

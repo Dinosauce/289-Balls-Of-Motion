@@ -46,6 +46,31 @@ void resolveSA(Sphere* s, AABB* aabb)
     reflectS(s, aabb->normal);
 }
 
+void resolveSS(Sphere* s1, Sphere* s2)
+{
+    float d = distance(s1->center, s2->center);
+    float n[3]; // x,y and z normal (from s2 -> s1)
+    int i;
+
+    // Sets the collision normal
+    for (i = 0; i< 3; i++)
+    {
+        n[i] = (s2->center[i] - s1->center[i]) / d;
+    }
+
+    // calculate p-value
+    float p = 2 * ((s1->direction[0] * n[0] + s1->direction[1] * n[1] + s1->direction[2] * n[2]) -
+                   (s2->direction[0] * n[0] + s2->direction[1] * n[1] + s2->direction[2] * n[2])) /
+                   (s1->mass + s2->mass);
+
+    // Calculate / set new velocity for each sphere
+    for (i = 0; i< 3; i++)
+    {
+        s1->direction[i] = s1->direction[i] - (p * s1->mass * n[i]);
+        s2->direction[i] = s2->direction[i] + (p * s2->mass * n[i]);
+    }
+}
+
 float distance(vect3 p1, vect3 p2)
 {
     float x, y, z;

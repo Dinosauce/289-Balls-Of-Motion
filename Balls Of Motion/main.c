@@ -11,12 +11,10 @@
 
 
 Camera cam;
-Sphere s;
-Sphere s2;
-#define AABBNUM  6
+#define NUM_AABB  6
+#define NUM_SPHERE 5
 AABB* aabbList;
-
-double test = 0.0;
+Sphere* sphereList;
 
 int forward = 0;       //Forward movement velocity.
 int backward = 0;
@@ -70,23 +68,18 @@ void myinit()
     glEnable(GL_DEPTH_TEST);
     setCam(&cam, 0.0, 1.7, 10.0, 75.0);
 
-    setSphere(&s, -14.0f, 1.0f, 1.0f, 1.0f);
-    setSphere(&s2, 0.0, 0.0, 1.0, 2.0);
-    setSphereVelocity(&s, 5, 5, 5);
-    setSphereVelocity(&s2, 0, 0, 1);
-
     //Set House Walls
     // -16 - 16
     // 0   - 9.6
     // -12 - 12
-    aabbList = malloc(AABBNUM * (sizeof(*aabbList)));
+    aabbList = malloc(NUM_AABB * (sizeof(*aabbList)));
 
     setAABB(&aabbList[0],-18, 0, -12, -16, 9.6, 12);
     setNormal(&aabbList[0], 1, 0, 0);
     setAABB(&aabbList[1],16, 0, -12, 18, 9.6, 12);
     setNormal(&aabbList[1], -1, 0, 0);
 
-    setAABB(&aabbList[2],-12, 0, -12, 16, 0, 12);
+    setAABB(&aabbList[2],-16, -2, -12, 16, 0, 12);
     setNormal(&aabbList[2], 0, 1, 0);
     setAABB(&aabbList[3],-16, 9.6, -12, 16, 11.6, 12);
     setNormal(&aabbList[3], 0, -1, 0);
@@ -95,6 +88,15 @@ void myinit()
     setNormal(&aabbList[4], 0, 0, 1);
     setAABB(&aabbList[5],-16, 0, 12, 16, 9.6, 14);
     setNormal(&aabbList[5], 0, 0, -1);
+
+    // Initialize Test Spheres
+    sphereList = malloc(NUM_SPHERE * (sizeof(*sphereList)));
+
+    setSphere(&sphereList[0], -4.0f, 1.6f, 1.0f, 1.0f);
+    setSphereVelocity(&sphereList[0], 5, 0, 0);
+
+    setSphere(&sphereList[1], 4.0, 1.4f, 1.3f, 0.5f);
+    setSphereVelocity(&sphereList[1], -15, 0, 0);
     /// =============================
 }
 
@@ -241,9 +243,6 @@ void keyPress(unsigned char key, int x, int y)
             cam.cPos[1] += 0.00001;
         }
         break;
-    case ';':
-        test += 0.1;
-        break;
     }
 }
 
@@ -344,12 +343,16 @@ void display()
     updateCamera();
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glLineWidth(10.0);
+    //glLineWidth(10.0);
 
-    glColor3d(1.0, 0.0, 1.0);
-    drawSphere(&s);
-    glColor3d(0.0, 1.0, 1.0);
-    drawSphere(&s2);
+
+    //TODO: Give each individual sphere a color. Random on spawn??? (if not textured)
+    glColor3d(0.2, 0.5, 1.0);
+    int s;
+    for (s=0; s<NUM_SPHERE; s++)
+    {
+        drawSphere(&sphereList[s]);
+    }
 
     glPushMatrix();
         glScalef(8,4,4);
@@ -364,15 +367,29 @@ void display()
 
 void updateGame(int time)
 {
-    int i;
-    animate(&s, time);
-    animate(&s2, time);
-
-    for (i=0; i< AABBNUM; i++)
+    int a, s, j;
+    for (s=0; s<NUM_SPHERE; s++)
     {
-        //For Each Sphere
-        if(collidesSA(&s, &aabbList[i]))
-            resolveSA(&s, &aabbList[i]);
+        animate(&sphereList[s], time);
+    }
+
+    //Check for collision with walls
+    for (a=0; a< NUM_AABB; a++)
+    {
+        for (s=0; s<NUM_SPHERE; s++)
+        {
+            if(collidesSA(&sphereList[s], &aabbList[a]))
+                resolveSA(&sphereList[s], &aabbList[a]);
+        }
+    }
+
+    for (s = 0; s < NUM_SPHERE; s++)
+    {
+        for (j = s + 1; j < NUM_SPHERE; j++)
+        {
+            if(collidesSS(&sphereList[s], &sphereList[j]))
+                resolveSS(&sphereList[s], &sphereList[j]);
+        }
     }
 }
 
@@ -427,6 +444,8 @@ int main(int argc, char** argv)
 
     lastUpdate = glutGet(GLUT_ELAPSED_TIME);
     frameCheck();
+
+    //glutFullScreen();
 
     glutMainLoop();
 

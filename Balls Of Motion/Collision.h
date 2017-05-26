@@ -34,6 +34,6 @@ void resolveSA(Sphere* s, AABB* aabb);
 /** Resolve a collision between 2 spheres
  * See: http://ericleong.me/research/circle-circle/#dynamic-circle-circle-collision
  */
-//TODO: void resolveSS(Sphere* s1, Sphere* s2);
+void resolveSS(Sphere* s1, Sphere* s2);
 
 #endif // COLLISION_H
