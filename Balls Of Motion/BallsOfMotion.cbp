@@ -47,6 +47,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Extra.h" />
+		<Unit filename="RawLoader.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="RawLoader.h" />
 		<Unit filename="Sphere.c">
 			<Option compilerVar="CC" />
 		</Unit>
