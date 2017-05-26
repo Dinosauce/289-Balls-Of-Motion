@@ -8,6 +8,7 @@
 #include "Collision.h"
 #include "Windows.h"
 #include "Extra.h"
+#include "RawLoader.h"
 
 
 Camera cam;
@@ -16,17 +17,24 @@ Camera cam;
 AABB* aabbList;
 Sphere* sphereList;
 
+// ====== Image overlays
+int showMenu = 1;
+int showExit = 0;
+GLuint texMenu, texExit;
+
+// ====== Movement
 int forward = 0;       //Forward movement velocity.
 int backward = 0;
 int left = 0;     //Sidewards movement velocity.
 int right = 0;
 
-
+// ====== Camera movement
 int zRotate = 0;    //Z-Axiz rotation velocity.
 int yRotate = 0;    //Y-Axiz rotation velocity.
 
 int mouseFunc = 0;  //Determines whether the mouse is in control of the camera.
 
+// ====== Window
 int windowWidth = 1280;  //Windows width
 int windowHeight = 720; //Windows height
 int windowXcen;         //Windows horizontal center
@@ -67,6 +75,19 @@ void myinit()
     glClearColor(0.8, 0.9, 1.0, 1.0); /* draw on white background */
     glEnable(GL_DEPTH_TEST);
     setCam(&cam, 0.0, 1.7, 10.0, 75.0);
+
+    // Load Images
+    image img;
+    img.data = loadRaw("Content/Exit.raw", 640, 640);
+    img.width = 640;
+    img.height = 640;
+    allocateImage(&img, &texExit);
+    free(img.data);
+
+    img.data = loadRaw("Content/Help.raw", 640, 640);
+    allocateImage(&img, &texMenu);
+    free(img.data);
+
 
     //Set House Walls
     // -16 - 16
@@ -271,8 +292,16 @@ void keyRelease(unsigned char key, int x, int y)
     case 'R':
         toggleMouse();
         break;
+    case 9: // Horizontal tab
+    case 'i':
+    case 'I':
+        showMenu = !showMenu;
+        break;
     case 27:
-        exit(0);
+        if (!showExit)
+            showExit = 1;
+        else
+            exit(0);
     }
 }
 
@@ -335,10 +364,51 @@ void updateCamera()
               cam.cNorm[0], cam.cNorm[1], cam.cNorm[2]);
 }
 
-void display()
+//Displays a square image, centered in the window (stretched)
+void showImage(GLuint texID)
 {
+    // Set 2D display
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    glViewport(0, 0, windowWidth, windowHeight);
+    gluOrtho2D(0.0, windowWidth, windowHeight, 0);
+
+    glMatrixMode(GL_MODELVIEW);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
+
+    // Reset color to display fill texture colors
+    glColor3f(1,1,1);
+
+    //Fit image to the screen
+    if (windowWidth > windowHeight)
+        displayImage(texID, (windowWidth - windowHeight)/2, 0, windowHeight, windowHeight);
+    else
+        displayImage(texID, 0, (windowHeight - windowWidth)/2, windowWidth, windowWidth);
+
+    glutSwapBuffers();
+}
+
+void display()
+{
+    // Reset 3D drawing
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    glViewport(0, 0, windowWidth, windowHeight);
+    gluPerspective(90, windowWidth*1.0/windowHeight, 0.01, 500);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    // Draw scene
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+
+    // Disable textures
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     updateCamera();
 
@@ -397,10 +467,20 @@ void frameCheck()
 {
     glutTimerFunc(FRAMEDELAY, frameCheck, 0);
     int time = glutGet(GLUT_ELAPSED_TIME) - lastUpdate;
-    updateGame(time);
+
+    if (!showExit)
+    {
+        if (!showMenu)
+        {
+            updateGame(time);
+            display();
+        }
+        else { showImage(texMenu); }
+    }
+    else { showImage(texExit); }
+
 
     lastUpdate = glutGet(GLUT_ELAPSED_TIME);
-    display();
 }
 
 void resize(int x, int y)

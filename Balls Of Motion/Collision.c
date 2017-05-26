@@ -40,6 +40,7 @@ void resolveSA(Sphere* s, AABB* aabb)
     int i;
     for (i = 0; i < 3; i++)
     {
+        // Only works when the circles center is still outside the aabb
         s->center[i] = point[i] + (aabb->normal[i] * s->radius);
     }
 
