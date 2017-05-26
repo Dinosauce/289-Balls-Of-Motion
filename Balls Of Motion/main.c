@@ -5,14 +5,16 @@
 #include <GL/glut.h>
 
 #include "Camera.h"
-//#include "Sphere.h"
 #include "Collision.h"
 #include "Windows.h"
+#include "Extra.h"
 
 
 Camera cam;
 Sphere s;
 Sphere s2;
+#define AABBNUM  6
+AABB* aabbList;
 
 double test = 0.0;
 
@@ -67,8 +69,32 @@ void myinit()
     glClearColor(0.8, 0.9, 1.0, 1.0); /* draw on white background */
     glEnable(GL_DEPTH_TEST);
     setCam(&cam, 0.0, 1.7, 10.0, 75.0);
-    setSphere(&s, 0.0f, 1.0f, 1.0f, 1.0f);
+
+    setSphere(&s, -14.0f, 1.0f, 1.0f, 1.0f);
     setSphere(&s2, 0.0, 0.0, 1.0, 2.0);
+    setSphereVelocity(&s, 5, 5, 5);
+    setSphereVelocity(&s2, 0, 0, 1);
+
+    //Set House Walls
+    // -16 - 16
+    // 0   - 9.6
+    // -12 - 12
+    aabbList = malloc(AABBNUM * (sizeof(*aabbList)));
+
+    setAABB(&aabbList[0],-18, 0, -12, -16, 9.6, 12);
+    setNormal(&aabbList[0], 1, 0, 0);
+    setAABB(&aabbList[1],16, 0, -12, 18, 9.6, 12);
+    setNormal(&aabbList[1], -1, 0, 0);
+
+    setAABB(&aabbList[2],-12, 0, -12, 16, 0, 12);
+    setNormal(&aabbList[2], 0, 1, 0);
+    setAABB(&aabbList[3],-16, 9.6, -12, 16, 11.6, 12);
+    setNormal(&aabbList[3], 0, -1, 0);
+
+    setAABB(&aabbList[4],-16, 0, -14, 16, 9.6, -12);
+    setNormal(&aabbList[4], 0, 0, 1);
+    setAABB(&aabbList[5],-16, 0, 12, 16, 9.6, 14);
+    setNormal(&aabbList[5], 0, 0, -1);
     /// =============================
 }
 
@@ -322,30 +348,12 @@ void display()
 
     glColor3d(1.0, 0.0, 1.0);
     drawSphere(&s);
+    glColor3d(0.0, 1.0, 1.0);
+    drawSphere(&s2);
 
     glPushMatrix();
-        glTranslated(-3.0, 0.0, 0.0);
+        glScalef(8,4,4);
         drawHouse();
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslated(4.0, 0.0, 0.0);
-        glRotated(90.0, 0.0, 1.0, 0.0);
-        drawHouse();
-    glPopMatrix();
-
-
-    glPushMatrix();
-        glColor3f(1.0, 0.2, 0.0);
-        glTranslated(0.0, 1.6, 0.0);
-        drawSphere2(15);
-    glPopMatrix();
-
-    glPushMatrix();
-        glColor3f(0.95, 0.9, 0.15);
-        glTranslated(0.0, 1.5, 0.0);
-        glScalef(0.12, 0.2, 0.12);
-        drawSphere(&s);
     glPopMatrix();
 
     glutSwapBuffers();
@@ -354,10 +362,26 @@ void display()
     //glutPostRedisplay();
 }
 
+void updateGame(int time)
+{
+    int i;
+    animate(&s, time);
+    animate(&s2, time);
+
+    for (i=0; i< AABBNUM; i++)
+    {
+        //For Each Sphere
+        if(collidesSA(&s, &aabbList[i]))
+            resolveSA(&s, &aabbList[i]);
+    }
+}
+
 void frameCheck()
 {
     glutTimerFunc(FRAMEDELAY, frameCheck, 0);
-    animate(&s, glutGet(GLUT_ELAPSED_TIME) - lastUpdate);
+    int time = glutGet(GLUT_ELAPSED_TIME) - lastUpdate;
+    updateGame(time);
+
     lastUpdate = glutGet(GLUT_ELAPSED_TIME);
     display();
 }

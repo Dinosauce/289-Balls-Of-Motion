@@ -20,8 +20,15 @@ typedef struct{
      */
     void setSphere(Sphere* newSphere, float x, float y, float z, float radius);
 
+    /// Sets the spheres velocity in x, y, and z directions
+    void setSphereVelocity(Sphere* sphere, float xv, float yv, float zv);
+
+    /** Updates the spheres position based on its direction and the
+      * tick (time passed since last update)
+      */
     void animate(Sphere* s, int tick);
 
+    /// Renders the sphere
     void drawSphere(Sphere* s);
 
     //void drawSphere(int slices);

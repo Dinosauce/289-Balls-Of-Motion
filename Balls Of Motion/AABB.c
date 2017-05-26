@@ -9,6 +9,12 @@ void setAABB(AABB* newAABB, float xMin, float yMin, float zMin, float xMax, floa
     newAABB->pMax[0] = xMax;
     newAABB->pMax[1] = yMax;
     newAABB->pMax[2] = zMax;
+
+    newAABB->normal[0] = 0;
+    newAABB->normal[1] = 0;
+    newAABB->normal[2] = 0;
+
+    normalize(newAABB->normal);
 }
 
 void setNormal(AABB* aabb, float x, float y, float z)
@@ -16,6 +22,8 @@ void setNormal(AABB* aabb, float x, float y, float z)
     aabb->normal[0] = x;
     aabb->normal[1] = y;
     aabb->normal[2] = z;
+
+    normalize(aabb->normal);
 }
 
 void clamp(AABB* aabb, vect3 point, vect3 out)

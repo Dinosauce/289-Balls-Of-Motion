@@ -21,8 +21,11 @@ typedef struct{
      * \param zMax - maxPoint
      */
     void setAABB(AABB* newAABB, float xMin, float yMin, float zMin, float xMax, float yMax, float zMax);
+
+    /// Sets the normal to given values and normalize
     void setNormal(AABB* aabb, float x, float y, float z);
 
+    /// Clamps the point to within the aabb and sets it to out
 	void clamp(AABB* aabb, vect3 point, vect3 out);
 
 #endif // AABB_H

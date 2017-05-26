@@ -6,11 +6,18 @@ void setSphere(Sphere* newSphere, float x, float y, float z, float radius)
     newSphere->center[1] = y;
     newSphere->center[2] = z;
 
-    newSphere->direction[0] = 1.0f;
-    newSphere->direction[1] = 0.0f;
-    newSphere->direction[2] = 0.0f;
-
     newSphere->radius = radius;
+
+    newSphere->direction[0] = 0;
+    newSphere->direction[1] = 0;
+    newSphere->direction[2] = 0;
+}
+
+void setSphereVelocity(Sphere* sphere, float xv, float yv, float zv)
+{
+    sphere->direction[0] = xv;
+    sphere->direction[1] = yv;
+    sphere->direction[2] = zv;
 }
 
 void animate(Sphere* s, int tick)
