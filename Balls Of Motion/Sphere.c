@@ -22,9 +22,12 @@ void setSphereVelocity(Sphere* sphere, float xv, float yv, float zv)
     sphere->direction[2] = zv;
 }
 
-void animate(Sphere* s, int tick)
+void animate(Sphere* s, float gravity, int tick)
 {
     float time = tick / 1000.0;
+
+    s->direction[1] -= gravity * time;
+
     s->center[0] += s->direction[0] * time;
     s->center[1] += s->direction[1] * time;
     s->center[2] += s->direction[2] * time;

@@ -27,7 +27,7 @@ typedef struct{
     /** Updates the spheres position based on its direction and the
       * tick (time passed since last update)
       */
-    void animate(Sphere* s, int tick);
+    void animate(Sphere* s, float gravity, int tick);
 
     /// Renders the sphere
     void drawSphere(Sphere* s);

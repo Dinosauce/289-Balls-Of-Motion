@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #include <GL/glut.h>
 
@@ -28,6 +29,13 @@ int forward = 0;       //Forward movement velocity.
 int backward = 0;
 int left = 0;     //Sidewards movement velocity.
 int right = 0;
+
+// ====== Ball spawn variables
+float velocity = 5;
+float mass = 1;
+float gravity = 9.8f;
+float radius = 1;
+
 
 // ====== Camera movement
 int zRotate = 0;    //Z-Axiz rotation velocity.
@@ -300,6 +308,8 @@ void keyRelease(unsigned char key, int x, int y)
         showMenu = !showMenu;
         break;
     case 27:
+    case 'Q':
+    case 'q':
             showExit = !showExit;
     }
 }
@@ -378,6 +388,64 @@ void updateCamera()
                     camCollider.center[i] = cam.cPos[i];
 }
 
+// (Crude) Displays the string at x, y screen using glut bitmap
+void rendText(char* str, int len, int x, int y)
+{
+    glTranslatef(x, y, 0);
+
+    //Set Bottom Right Raster Position
+    glRasterPos2d(0, 0);
+    int i;
+    for (i = 0; str[i] != '\0' && i < len; i++)
+    {
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[i]);
+    }
+
+}
+
+// Displays game variables
+void displayText()
+{
+        // Set 2D display
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    glViewport(0, 0, windowWidth, windowHeight);
+    gluOrtho2D(0.0, windowWidth, windowHeight, 0);
+
+    glMatrixMode(GL_MODELVIEW);
+
+    glLoadIdentity();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    // Text colour white
+    glColor3f(1,1,1);
+
+    const int len = 32;
+    int height = 24;
+    char txt[32] = {0};
+
+    strcpy(txt, "Gravity: ");
+    rendText(txt, len, 0, height);
+    sprintf(txt, "%.2f\0", gravity);
+    rendText(txt, len, 0, height);
+
+    strcpy(txt, "Initial Mass: ");
+    rendText(txt, len, 0, height);
+    sprintf(txt, "%.2f\0", mass);
+    rendText(txt, len, 0, height);
+
+    strcpy(txt, "Initial Velocity: ");
+    rendText(txt, len, 0, height);
+    sprintf(txt, "%.2f\0", velocity);
+    rendText(txt, len, 0, height);
+
+    strcpy(txt, "Initial Radius: ");
+    rendText(txt, len, 0, height);
+    sprintf(txt, "%.2f\0", radius);
+    rendText(txt, len, 0, height);
+}
+
 //Displays a square image, centered in the window (stretched)
 void showImage(GLuint texID)
 {
@@ -443,6 +511,8 @@ void display()
         drawHouse();
     glPopMatrix();
 
+    displayText();
+
     glutSwapBuffers();
 
     //glutTimerFunc(FRAMEDELAY, display, 0);
@@ -454,12 +524,13 @@ void updateGame(int time)
     int a, s, j, i;
     for (s=0; s<NUM_SPHERE; s++)
     {
-        animate(&sphereList[s], time);
+        animate(&sphereList[s], gravity, time);
     }
 
     //Check for collision with walls
     for (a=0; a< NUM_AABB; a++)
     {
+        // Check collision on camera
         if(collidesSA(&camCollider, &aabbList[a]))
         {
                 resolveSA(&camCollider, &aabbList[a]);
