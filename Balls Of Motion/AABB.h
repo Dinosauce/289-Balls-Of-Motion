@@ -28,4 +28,10 @@ typedef struct{
     /// Clamps the point to within the aabb and sets it to out
 	void clamp(AABB* aabb, vect3 point, vect3 out);
 
+	//TODO: Implement for collision detection; as collisions required the
+    // intersection point (or closest point to the surface) with the aabb
+    // not a position within the aabb (which clamp may return)
+    // /// Moves the point to a point on the aabbs exterior (in direction of normal) and extends by buffer.
+	// void clampWall(AABB* aabb, vect3 point, float buffer);
+
 #endif // AABB_H

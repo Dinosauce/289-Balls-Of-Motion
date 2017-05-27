@@ -28,4 +28,7 @@
 
 	/// Returns the dot product of the two vectors
 	float dot(vect3 v1, vect3 v2);
+
+	/// Returns 1 when the two vectors are equal (0 otherwise)
+	int equals(vect3 v1, vect3 v2);
 #endif // EXTRA_H

@@ -12,6 +12,7 @@
 
 
 Camera cam;
+Sphere camCollider;
 #define NUM_AABB  6
 #define NUM_SPHERE 5
 AABB* aabbList;
@@ -75,6 +76,7 @@ void myinit()
     glClearColor(0.8, 0.9, 1.0, 1.0); /* draw on white background */
     glEnable(GL_DEPTH_TEST);
     setCam(&cam, 0.0, 1.7, 10.0, 75.0);
+    setSphere(&camCollider, cam.cPos[0], cam.cPos[1], cam.cPos[2], 0.3);
 
     // Load Images
     image img;
@@ -298,10 +300,7 @@ void keyRelease(unsigned char key, int x, int y)
         showMenu = !showMenu;
         break;
     case 27:
-        if (!showExit)
-            showExit = 1;
-        else
-            exit(0);
+            showExit = !showExit;
     }
 }
 
@@ -341,6 +340,16 @@ void specKeyRelease(int key, int x, int y)
     }
 }
 
+void mouseClick(int button, int state, int x, int y)
+{
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
+        //Exit or left click when exit screen is shown
+        if(showExit)
+            exit(0);
+    }
+}
+
 // Must be called after glLoadIdentity() and before drawing in perspective.
 void updateCamera()
 {
@@ -362,6 +371,11 @@ void updateCamera()
     gluLookAt(cam.cPos[0], cam.cPos[1], cam.cPos[2],
               cam.cCen[0], cam.cCen[1], cam.cCen[2],
               cam.cNorm[0], cam.cNorm[1], cam.cNorm[2]);
+
+    // Update camera collider
+    int i;
+    for (i = 0; i < 3; i++)
+                    camCollider.center[i] = cam.cPos[i];
 }
 
 //Displays a square image, centered in the window (stretched)
@@ -437,7 +451,7 @@ void display()
 
 void updateGame(int time)
 {
-    int a, s, j;
+    int a, s, j, i;
     for (s=0; s<NUM_SPHERE; s++)
     {
         animate(&sphereList[s], time);
@@ -446,6 +460,13 @@ void updateGame(int time)
     //Check for collision with walls
     for (a=0; a< NUM_AABB; a++)
     {
+        if(collidesSA(&camCollider, &aabbList[a]))
+        {
+                resolveSA(&camCollider, &aabbList[a]);
+                for (i = 0; i < 3; i++)
+                    cam.cPos[i] = camCollider.center[i];
+        }
+
         for (s=0; s<NUM_SPHERE; s++)
         {
             if(collidesSA(&sphereList[s], &aabbList[a]))
@@ -521,6 +542,8 @@ int main(int argc, char** argv)
     glutKeyboardUpFunc(keyRelease);
     glutSpecialFunc(specKeyPress);
     glutSpecialUpFunc(specKeyRelease);
+
+    glutMouseFunc(mouseClick);
 
     lastUpdate = glutGet(GLUT_ELAPSED_TIME);
     frameCheck();
