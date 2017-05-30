@@ -57,6 +57,7 @@ const int FRAMEDELAY = 1000/60.0f;   //Minimum delay between frames in milliseco
 
 int lastUpdate;
 
+// TODO: DELETE
 void drawSphere2(int slices)
 {
     //float points[slices][slices];

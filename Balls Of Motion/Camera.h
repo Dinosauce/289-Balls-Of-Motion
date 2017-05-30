@@ -3,7 +3,10 @@
 
 #include "Extra.h"
 
-    /// Container for a single camera.
+    /**
+     * Container for a single camera.
+     *  \author Jayden Grant
+     */
     typedef struct
     {
         vect3 cPos;     // Camera's position

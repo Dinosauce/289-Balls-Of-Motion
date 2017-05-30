@@ -3,7 +3,9 @@
 
 #include <GL/glut.h>
 #include "Extra.h"
+/// \author Jayden Grant
 
+/// AABB with normal
 typedef struct{
     vect3 pMin;
     vect3 pMax;

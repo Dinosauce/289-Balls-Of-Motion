@@ -3,6 +3,12 @@
 
 
 #include <math.h>
+/**
+ * Defines structure and functions used throughout the project
+ * \author Jayden Grant
+ */
+
+    /// Defines the constant used to convert from degrees to Radians (deg * RADIAN_MULT = radians)
     const static float RADIAN_MULT = M_PI/180;
 
     /// Definces a point in 3D space.
@@ -23,7 +29,7 @@
 	/// Normailizes the given vector
 	void normalize(vect3 vector);
 
-	/// Reflects the vector against the normal
+	/// Reflects the vector against the normal (reflecting direction)
 	void reflect(vect3 vec, vect3 normal);
 
 	/// Returns the dot product of the two vectors

@@ -4,6 +4,9 @@
 #include <GL/glut.h>
 #include "Extra.h"
 
+/// \author Jayden Grant
+
+/// Defines a sphere with velocity (direction) and mass
 typedef struct{
     vect3 center;
     vect3 direction;
