@@ -559,13 +559,13 @@ void updateGame(int time)
 void frameCheck()
 {
     glutTimerFunc(FRAMEDELAY, frameCheck, 0);
-    int time = glutGet(GLUT_ELAPSED_TIME) - lastUpdate;
+    //int time = glutGet(GLUT_ELAPSED_TIME) - lastUpdate;
 
     if (!showExit)
     {
         if (!showMenu)
         {
-            updateGame(time);
+            updateGame(FRAMEDELAY);
             display();
         }
         else { showImage(texMenu); }
@@ -573,7 +573,7 @@ void frameCheck()
     else { showImage(texExit); }
 
 
-    lastUpdate = glutGet(GLUT_ELAPSED_TIME);
+    //lastUpdate = glutGet(GLUT_ELAPSED_TIME);
 }
 
 void resize(int x, int y)
