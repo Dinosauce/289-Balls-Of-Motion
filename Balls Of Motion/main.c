@@ -358,6 +358,12 @@ void mouseClick(int button, int state, int x, int y)
         //Exit or left click when exit screen is shown
         if(showExit)
             exit(0);
+        else
+        {
+            setSphere(&sphereList[2], cam.cPos[0], cam.cPos[1], cam.cPos[2], 0.5f);
+            setSphereVelocity(&sphereList[2],  cam.cCen[0] , cam.cCen[1], cam.cCen[2]);
+            printf("\n camera x position: %f  y: %f  z: %f", cam.cCen[0],cam.cCen[1],cam.cCen[2]);
+        }
     }
 }
 
@@ -510,6 +516,15 @@ void display()
     glPushMatrix();
         glScalef(8,4,4);
         drawHouse();
+    glPopMatrix();
+
+    glPushMatrix();
+        glPointSize(5.0f);
+		glBegin(GL_POINTS);
+		glColor3f(1,1,1);
+		glVertex3f(cam.cCen[0],cam.cCen[1],cam.cCen[1]);
+
+		glEnd();
     glPopMatrix();
 
     displayText();
