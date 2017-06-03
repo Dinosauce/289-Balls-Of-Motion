@@ -31,11 +31,12 @@ int left = 0;     //Sidewards movement velocity.
 int right = 0;
 
 // ====== Ball spawn variables
-float velocity = 5;
-float mass = 1;
 float gravity = 9.8f;
+float mass = 1;
+float velocity = 5;
 float radius = 1;
-
+enum BallVariables {GRAVITY, MASS, VELOCITY, RADIUS};
+enum BallVariables ballv = GRAVITY;
 
 // ====== Camera movement
 int zRotate = 0;    //Z-Axiz rotation velocity.
@@ -297,7 +298,7 @@ void keyRelease(unsigned char key, int x, int y)
         break;
     case 's':
     case 'S':
-        backward = 0;
+    backward = 0;
         break;
     case 'r':
     case 'R':
@@ -363,6 +364,7 @@ void mouseClick(int button, int state, int x, int y)
             setSphere(&sphereList[2], cam.cPos[0], cam.cPos[1], cam.cPos[2], 0.5f);
             setSphereVelocity(&sphereList[2],  cam.cCen[0] , cam.cCen[1], cam.cCen[2]);
             printf("\n camera x position: %f  y: %f  z: %f", cam.cCen[0],cam.cCen[1],cam.cCen[2]);
+            printf("\n camera viewing angles yRad: %f  Zrad: %f" , cam.yRad, cam.zRad);
         }
     }
 }
@@ -401,7 +403,7 @@ void rendText(char* str, int len, int x, int y)
     glTranslatef(x, y, 0);
 
     //Set Bottom Right Raster Position
-    glRasterPos2d(0, 0);
+    glRasterPos2d(10, 5);
     int i;
     for (i = 0; str[i] != '\0' && i < len; i++)
     {
@@ -451,6 +453,39 @@ void displayText()
     rendText(txt, len, 0, height);
     sprintf(txt, "%.2f\0", radius);
     rendText(txt, len, 0, height);
+}
+
+displayBorders()
+{
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    glViewport(0, 0, windowWidth, windowHeight);
+    gluOrtho2D(0.0, windowWidth, windowHeight, 0);
+
+    glMatrixMode(GL_MODELVIEW);
+
+    glLoadIdentity();
+
+    glLineWidth(5);
+    if(ballv == GRAVITY)
+    {
+        glColor3f(0,0,0);
+        glBegin(GL_LINES);
+            glVertex2f(5,5);
+            glVertex2f(5,55);
+
+            glVertex2f(100,55);
+            glVertex2f(100,5);
+
+            glVertex2f(5,5);
+            glVertex2f(100,5);
+
+            glVertex2f(5,55);
+            glVertex2f(100,55);
+        glEnd();
+    }
+
 }
 
 //Displays a square image, centered in the window (stretched)
@@ -528,6 +563,8 @@ void display()
     glPopMatrix();
 
     displayText();
+
+    displayBorders();
 
     glutSwapBuffers();
 
