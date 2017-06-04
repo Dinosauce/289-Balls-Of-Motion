@@ -362,7 +362,7 @@ void mouseClick(int button, int state, int x, int y)
         else
         {
             setSphere(&sphereList[2], cam.cPos[0], cam.cPos[1], cam.cPos[2], 0.5f);
-            setSphereVelocity(&sphereList[2],  cam.cCen[0] , cam.cCen[1], cam.cCen[2]);
+            setSphereVelocity(&sphereList[2],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
             printf("\n camera x position: %f  y: %f  z: %f", cam.cCen[0],cam.cCen[1],cam.cCen[2]);
             printf("\n camera viewing angles yRad: %f  Zrad: %f" , cam.yRad, cam.zRad);
         }
@@ -557,7 +557,7 @@ void display()
         glPointSize(5.0f);
 		glBegin(GL_POINTS);
 		glColor3f(1,1,1);
-		glVertex3f(cam.cCen[0],cam.cCen[1],cam.cCen[1]);
+		glVertex3f(cam.cCen[0]-cam.cPos[0],cam.cCen[1]-cam.cPos[1],cam.cCen[2]-cam.cPos[2]);
 
 		glEnd();
     glPopMatrix();
