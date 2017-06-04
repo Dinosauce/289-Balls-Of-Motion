@@ -35,6 +35,7 @@ float gravity = 9.8f;
 float mass = 1;
 float velocity = 5;
 float radius = 1;
+int BallNumber = 0;
 enum BallVariables {GRAVITY, MASS, VELOCITY, RADIUS};
 enum BallVariables ballv = GRAVITY;
 
@@ -413,6 +414,24 @@ void specKeyRelease(int key, int x, int y)
     }
 }
 
+void throwBall()
+{
+    if(BallNumber !=5)
+    {
+        setSphere(&sphereList[BallNumber], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
+        setSphereVelocity(&sphereList[BallNumber],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
+        BallNumber++;
+    }
+    else
+    {
+        BallNumber = 0;
+        setSphere(&sphereList[2], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
+        setSphereVelocity(&sphereList[2],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
+    }
+
+}
+
+
 void mouseClick(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
@@ -422,8 +441,7 @@ void mouseClick(int button, int state, int x, int y)
             exit(0);
         else
         {
-            setSphere(&sphereList[2], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
-            setSphereVelocity(&sphereList[2],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
+            throwBall();
         }
     }
 }
@@ -606,6 +624,25 @@ void display()
     int s;
     for (s=0; s<NUM_SPHERE; s++)
     {
+        switch(s)
+        {
+            case 0:
+                glColor3f(1,0,0);
+                break;
+            case 1:
+                glColor3f(0.5,1,0.5);
+                break;
+            case 2:
+                glColor3f(0,0,1);
+                break;
+            case 3:
+                glColor3f(1,1,0);
+                break;
+            case 4:
+                glColor3f(1,0,1);
+                break;
+
+        }
         drawSphere(&sphereList[s]);
     }
 
