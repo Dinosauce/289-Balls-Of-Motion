@@ -280,7 +280,7 @@ void keyPress(unsigned char key, int x, int y)
     }
 }
 //function to increase the values of the variables
-AddValue()
+void AddValue()
 {
     if(ballv == GRAVITY)
     {
@@ -301,7 +301,7 @@ AddValue()
 }
 
 //function to decrease the values of the variables
-MinusValue()
+void MinusValue()
 {
     if(ballv == GRAVITY)
     {
@@ -532,7 +532,7 @@ void displayText()
     rendText(txt, len, 0, height);
 }
 
-displayBorders()
+void displayBorders()
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -630,7 +630,7 @@ void display()
                 glColor3f(1,0,0);
                 break;
             case 1:
-                glColor3f(0.5,1,0.5);
+                glColor3f(0,1,1);
                 break;
             case 2:
                 glColor3f(0,0,1);
@@ -649,15 +649,6 @@ void display()
     glPushMatrix();
         glScalef(8,4,4);
         drawHouse();
-    glPopMatrix();
-
-    glPushMatrix();
-        glPointSize(5.0f);
-		glBegin(GL_POINTS);
-		glColor3f(1,1,1);
-		glVertex3f(cam.cCen[0]-cam.cPos[0],cam.cCen[1]-cam.cPos[1],cam.cCen[2]-cam.cPos[2]);
-
-		glEnd();
     glPopMatrix();
 
     displayText();
