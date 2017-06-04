@@ -422,7 +422,7 @@ void mouseClick(int button, int state, int x, int y)
             exit(0);
         else
         {
-            setSphere(&sphereList[2], cam.cPos[0], cam.cPos[1], cam.cPos[2], 0.5f);
+            setSphere(&sphereList[2], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
             setSphereVelocity(&sphereList[2],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
         }
     }
