@@ -37,4 +37,7 @@
 
 	/// Returns 1 when the two vectors are equal (0 otherwise)
 	int equals(vect3 v1, vect3 v2);
+
+	/// Multiplies the vector by scale.
+	void multiply(vect3 vect, float scale);
 #endif // EXTRA_H

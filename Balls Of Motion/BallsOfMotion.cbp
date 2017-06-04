@@ -55,6 +55,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Sphere.h" />
+		<Unit filename="TexturedWall.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="TexturedWall.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>

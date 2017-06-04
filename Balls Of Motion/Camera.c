@@ -25,8 +25,6 @@ void setCam(Camera* newCam, double x, double y, double z, double maxViewAngle)
     newCam->yRad = 0.0;
     newCam->zRad = 0.0;
 
-    newCam->yVel = 0;
-
     //Prevent Camera from looking
     if (maxViewAngle > 89.9 || maxViewAngle < 0.0)
         maxViewAngle = 89.9;
@@ -37,19 +35,6 @@ void setCam(Camera* newCam, double x, double y, double z, double maxViewAngle)
 
 void moveCam(Camera* cam, double forwardVel, double sideVel)
 {
-
-    if (cam->cPos[1] <= 1.7)
-    {
-        cam->cPos[1] = 1.7;
-        cam->yVel =0;
-    }
-    else
-    {
-        cam->yVel -= 0.03;
-    }
-    if ((cam->cPos[1] += cam->yVel) < 1.7)
-        cam->cPos[1] = 1.7;
-
     if (forwardVel == 0 || sideVel == 0)
     {
         moveForward(cam, forwardVel);
@@ -104,7 +89,7 @@ void rotateCameraY(Camera* cam, double vel)
     }
 }
 
-void adjustMovespeed(Camera* cam, double dSpeed)
+void increaseMovespeed(Camera* cam, double dSpeed)
 {
     cam->moveSpeed += dSpeed;
 }

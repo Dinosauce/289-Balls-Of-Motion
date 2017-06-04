@@ -13,8 +13,6 @@
         vect3 cCen;     // Camera's line of sight vector
         vect3 cNorm;    // Camera's normals
 
-        double yVel;
-
         double moveSpeed;       // Camera's movement speed.
         double rotateSpeed;     // Camera's rotate speed
 
@@ -71,8 +69,10 @@
     /** \brief Increases the camera's move speed by the given value.
      *
      * \param cam (Camera*) - The camera to adjust.
-     * \param dSpeed - The amount to change the camera speed by.
+     * \param dSpeed - The amount to increase the camera speed by.
      */
-    void adjustMovespeed(Camera* cam, double dSpeed);
+    void increaseMovespeed(Camera* cam, double dSpeed);
+
+
 
 #endif // CAMERA_H

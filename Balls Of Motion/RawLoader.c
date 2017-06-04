@@ -113,4 +113,5 @@ void displayImage(GLuint texID, int x, int y, int w, int h)
         glTexCoord2f(0,1);
         glVertex2f(x, y + h);
     glEnd();
+    glDisable(GL_TEXTURE_2D);
 }

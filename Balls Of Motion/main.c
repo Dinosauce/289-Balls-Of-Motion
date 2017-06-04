@@ -10,6 +10,7 @@
 #include "Windows.h"
 #include "Extra.h"
 #include "RawLoader.h"
+#include "TexturedWall.h"
 
 
 Camera cam;
@@ -19,10 +20,15 @@ Sphere camCollider;
 AABB* aabbList;
 Sphere* sphereList;
 
+#define NUM_WALLS 6
+TexturedWall* wallList;
+
 // ====== Image overlays
 int showMenu = 1;
 int showExit = 0;
+//Tex Ids
 GLuint texMenu, texExit;
+GLuint texWall, texFloor;
 
 // ====== Movement
 int forward = 0;       //Forward movement velocity.
@@ -35,6 +41,7 @@ float velocity = 5;
 float mass = 1;
 float gravity = 9.8f;
 float radius = 1;
+float energyLoss = 0.9;
 
 
 // ====== Camera movement
@@ -55,29 +62,7 @@ typedef GLfloat GLpoint3[3];
 
 const int FRAMEDELAY = 1000/60.0f;   //Minimum delay between frames in milliseconds.
 
-int lastUpdate;
-
-// TODO: DELETE
-void drawSphere2(int slices)
-{
-    //float points[slices][slices];
-
-    double h, r, hd, rd;
-    hd = 180/slices;
-    rd = 360/slices;
-
-    for (h = 10; h <= 170; h += hd)
-    {
-        glBegin(GL_LINE_LOOP);
-        for (r = 0; r < 360; r += rd)
-        {
-            double wt = sin((M_PI/180)* h);
-            glVertex3d(wt * sin(RADIAN_MULT * r), cos(RADIAN_MULT * h), wt * cos(RADIAN_MULT * r));
-        }
-        glEnd();
-    }
-}
-
+// Initialize game and openGL
 void myinit()
 {
     ///Init =========================
@@ -99,7 +84,32 @@ void myinit()
     allocateImage(&img, &texMenu);
     free(img.data);
 
+    img.width = 128;
+    img.height = 128;
+    img.data = loadRaw("Content/BRICK.raw", 128, 128);
+    allocateImage(&img, &texWall);
+    free(img.data);
 
+    img.data = loadRaw("Content/FLOOR.raw", 128, 128);
+    allocateImage(&img, &texFloor);
+    free(img.data);
+
+
+
+    wallList = malloc(NUM_WALLS * (sizeof(*wallList)));
+    setWall(&wallList[0], -16, 0, -12, 32, 9.6, xAxis);
+    setWall(&wallList[1], -16, 0, -12, 24, 9.6, zAxis);
+
+    setWall(&wallList[2], 16, 9.6, 12, -32, -9.6, xAxis);
+    setWall(&wallList[3], 16, 9.6, 12, -24, -9.6, zAxis);
+
+    setFloor(&wallList[4], -16, 0, -12, 32, 24);
+    setFloor(&wallList[5], 16, 9.6, 12, -32, -24);
+    int tx;
+    for (tx = 0; tx < 4; tx ++)
+        setTexture(&wallList[tx], texWall, 5, (wallList[tx].length / wallList[tx].height) );
+    for (tx = 4; tx < 6; tx ++)
+        setTexture(&wallList[tx], texFloor, 5, 2.0f);//(wallList[tx].length / wallList[tx].height) );
     //Set House Walls
     // -16 - 16
     // 0   - 9.6
@@ -124,11 +134,12 @@ void myinit()
     // Initialize Test Spheres
     sphereList = malloc(NUM_SPHERE * (sizeof(*sphereList)));
 
-    setSphere(&sphereList[0], -4.0f, 1.6f, 1.0f, 1.0f);
-    setSphereVelocity(&sphereList[0], 5, 0, 0);
+    setSphere(&sphereList[0], -10.0f, 1.6f, 1.0f, 1.0f);
+    setSphereVelocity(&sphereList[0], 8, 0, 0);
+    setSphereMass(&sphereList[0], 20);
 
-    setSphere(&sphereList[1], 4.0, 1.4f, 1.3f, 0.5f);
-    setSphereVelocity(&sphereList[1], -15, 0, 0);
+    setSphere(&sphereList[1], 0.0, 1.6f, 1.0f, 1.0f);
+    setSphereVelocity(&sphereList[1], 1, 0, 0);
     /// =============================
 }
 
@@ -268,13 +279,6 @@ void keyPress(unsigned char key, int x, int y)
     case 'S':
         backward = 1;
         break;
-    case ' ':
-        if (cam.cPos[1] <= 1.7)
-        {
-            cam.yVel = 0.3;
-            cam.cPos[1] += 0.00001;
-        }
-        break;
     }
 }
 
@@ -299,19 +303,28 @@ void keyRelease(unsigned char key, int x, int y)
     case 'S':
         backward = 0;
         break;
-    case 'r':
-    case 'R':
-        toggleMouse();
-        break;
     case 9: // Horizontal tab
     case 'i':
     case 'I':
-        showMenu = !showMenu;
+        // If statement ensures mouse is visible when game isn't running
+        if (!showExit)  // Dont toggle menu/help when on exit screen
+        {
+            showMenu = !showMenu;
+            toggleMouse();
+        }
         break;
     case 27:
     case 'Q':
     case 'q':
+        // If statement ensures mouse is visible when game isn't running
+        if (showMenu) // Allow exit when in menu/help
             showExit = !showExit;
+        else
+        {
+            showExit = !showExit;
+            toggleMouse();
+        }
+        break;
     }
 }
 
@@ -508,16 +521,18 @@ void display()
     }
 
     glPushMatrix();
-        glScalef(8,4,4);
-        drawHouse();
+        //glScalef(8,4,4);
+        //drawHouse();
+        int w;
+        for (w=0; w<NUM_WALLS; w++)
+        {
+            drawWall(&wallList[w]);
+        }
     glPopMatrix();
 
     displayText();
 
     glutSwapBuffers();
-
-    //glutTimerFunc(FRAMEDELAY, display, 0);
-    //glutPostRedisplay();
 }
 
 void updateGame(int time)
@@ -542,7 +557,10 @@ void updateGame(int time)
         for (s=0; s<NUM_SPHERE; s++)
         {
             if(collidesSA(&sphereList[s], &aabbList[a]))
+            {
                 resolveSA(&sphereList[s], &aabbList[a]);
+                multiply(&sphereList[s].direction, energyLoss);
+            }
         }
     }
 
@@ -551,15 +569,22 @@ void updateGame(int time)
         for (j = s + 1; j < NUM_SPHERE; j++)
         {
             if(collidesSS(&sphereList[s], &sphereList[j]))
+            {
                 resolveSS(&sphereList[s], &sphereList[j]);
+                //multiply(&sphereList[s].direction, energyLoss);
+                //multiply(&sphereList[j].direction, energyLoss);
+            }
         }
     }
 }
 
 void frameCheck()
 {
+    // glut will call frameCheck as soon as possible but AFTER FRAMEDELAY has passed.
+    // This means the game will attempt to run at the specified framerate, or slower if it cannot
+    // keep up.
+    // This will cause the animation to slow down.
     glutTimerFunc(FRAMEDELAY, frameCheck, 0);
-    //int time = glutGet(GLUT_ELAPSED_TIME) - lastUpdate;
 
     if (!showExit)
     {
@@ -571,9 +596,6 @@ void frameCheck()
         else { showImage(texMenu); }
     }
     else { showImage(texExit); }
-
-
-    //lastUpdate = glutGet(GLUT_ELAPSED_TIME);
 }
 
 void resize(int x, int y)
@@ -617,7 +639,6 @@ int main(int argc, char** argv)
 
     glutMouseFunc(mouseClick);
 
-    lastUpdate = glutGet(GLUT_ELAPSED_TIME);
     frameCheck();
 
     //glutFullScreen();

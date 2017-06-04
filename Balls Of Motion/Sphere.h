@@ -27,6 +27,9 @@ typedef struct{
     /// Sets the spheres velocity in x, y, and z directions
     void setSphereVelocity(Sphere* sphere, float xv, float yv, float zv);
 
+    /// Sets the spheres mass
+    void setSphereMass(Sphere* sphere, float mass);
+
     /** Updates the spheres position based on its direction and the
       * tick (time passed since last update)
       */

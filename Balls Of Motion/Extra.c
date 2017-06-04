@@ -52,6 +52,14 @@ void reflect(vect3 vec, vect3 normal)
     }
 }
 
+
+void multiply(vect3 vect, float scale)
+{
+    vect[0] *= scale;
+    vect[1] *= scale;
+    vect[2] *= scale;
+}
+
 int equals(vect3 v1, vect3 v2)
 {
     return (v1[0] == v2[0] && v1[1] == v2[1] && v1[2] == v2[2]);
