@@ -35,7 +35,7 @@ float gravity = 9.8f;
 float mass = 1;
 float velocity = 5;
 float radius = 1;
-int BallNumber = 0;
+int BallNumber = 2;
 enum BallVariables {GRAVITY, MASS, VELOCITY, RADIUS};
 enum BallVariables ballv = GRAVITY;
 
@@ -321,6 +321,24 @@ void MinusValue()
     }
 }
 
+//sets the balls initial variables to be thrown into the room and increments the ball count
+void throwBall()
+{
+    if(BallNumber !=5)
+    {
+        setSphere(&sphereList[BallNumber], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
+        setSphereVelocity(&sphereList[BallNumber],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
+        BallNumber++;
+    }
+    else
+    {
+        BallNumber = 0;
+        setSphere(&sphereList[2], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
+        setSphereVelocity(&sphereList[2],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
+    }
+
+}
+
 void keyRelease(unsigned char key, int x, int y)
 {
     switch(key)
@@ -344,6 +362,10 @@ void keyRelease(unsigned char key, int x, int y)
     case 45:
     case 95:
         MinusValue();
+        break;
+    case 'e':
+    case 'E':
+        throwBall();
         break;
     case 'd':
     case 'D':
@@ -412,23 +434,6 @@ void specKeyRelease(int key, int x, int y)
         zRotate = 0;
         break;
     }
-}
-
-void throwBall()
-{
-    if(BallNumber !=5)
-    {
-        setSphere(&sphereList[BallNumber], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
-        setSphereVelocity(&sphereList[BallNumber],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
-        BallNumber++;
-    }
-    else
-    {
-        BallNumber = 0;
-        setSphere(&sphereList[2], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
-        setSphereVelocity(&sphereList[2],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
-    }
-
 }
 
 
@@ -532,8 +537,10 @@ void displayText()
     rendText(txt, len, 0, height);
 }
 
-void displayBorders()
+//displays a crosshair in the center of the screen
+void displayCrosshair()
 {
+    //changes the viewing perspective to 2D
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
@@ -544,26 +551,55 @@ void displayBorders()
 
     glLoadIdentity();
 
+    //draws the border
+    glLineWidth(1);
+    glColor3f(0,0,0);
+    glBegin(GL_LINES);
+        glVertex2f(windowXcen,windowYcen+10);
+        glVertex2f(windowXcen,windowYcen-10);
+
+        glVertex2f(windowXcen+10,windowYcen);
+        glVertex2f(windowXcen-10,windowYcen);
+    glEnd();
+
+}
+
+//displays borders around the active variable field
+void displayBorders()
+{
+    //changes the viewing perspective to 2D
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    glViewport(0, 0, windowWidth, windowHeight);
+    gluOrtho2D(0.0, windowWidth, windowHeight, 0);
+
+    glMatrixMode(GL_MODELVIEW);
+
+    glLoadIdentity();
+
+    //moves the borders based on which variable is being altered
     glLineWidth(5);
     if(ballv == GRAVITY){ glTranslatef(0,0, 0); }
     if(ballv == MASS){ glTranslatef(0,50, 0); }
     if(ballv == VELOCITY){ glTranslatef(0,100, 0); }
     if(ballv == RADIUS){ glTranslatef(0,150, 0); }
 
-        glColor3f(0,0,0);
-        glBegin(GL_LINES);
-            glVertex2f(5,7);
-            glVertex2f(5,57);
+    //draws the border
+    glColor3f(0,0,0);
+    glBegin(GL_LINES);
+        glVertex2f(5,7);
+        glVertex2f(5,57);
 
-            glVertex2f(180,57);
-            glVertex2f(180,7);
+        glVertex2f(180,57);
+        glVertex2f(180,7);
 
-            glVertex2f(5,7);
-            glVertex2f(180,7);
+        glVertex2f(5,7);
+        glVertex2f(180,7);
 
-            glVertex2f(5,57);
-            glVertex2f(180,57);
-        glEnd();
+        glVertex2f(5,57);
+        glVertex2f(180,57);
+    glEnd();
 
 }
 
@@ -592,6 +628,34 @@ void showImage(GLuint texID)
         displayImage(texID, 0, (windowHeight - windowWidth)/2, windowWidth, windowWidth);
 
     glutSwapBuffers();
+}
+
+//makes each ball within the room a different colour
+void ballColour(int s)
+{
+    switch(s)
+    {
+        case 0:
+            //red ball
+            glColor3f(1,0,0);
+            break;
+        case 1:
+            //cyan ball
+            glColor3f(0,1,1);
+            break;
+        case 2:
+            //blue ball
+            glColor3f(0,0,1);
+            break;
+        case 3:
+            //yellow ball
+            glColor3f(1,1,0);
+            break;
+        case 4:
+            //magenta ball
+            glColor3f(1,0,1);
+            break;
+    }
 }
 
 void display()
@@ -624,25 +688,7 @@ void display()
     int s;
     for (s=0; s<NUM_SPHERE; s++)
     {
-        switch(s)
-        {
-            case 0:
-                glColor3f(1,0,0);
-                break;
-            case 1:
-                glColor3f(0,1,1);
-                break;
-            case 2:
-                glColor3f(0,0,1);
-                break;
-            case 3:
-                glColor3f(1,1,0);
-                break;
-            case 4:
-                glColor3f(1,0,1);
-                break;
-
-        }
+        ballColour(s);
         drawSphere(&sphereList[s]);
     }
 
@@ -654,6 +700,8 @@ void display()
     displayText();
 
     displayBorders();
+
+    displayCrosshair();
 
     glutSwapBuffers();
 
