@@ -278,11 +278,72 @@ void keyPress(unsigned char key, int x, int y)
         break;
     }
 }
+//function to increase the values of the variables
+AddValue()
+{
+    if(ballv == GRAVITY)
+    {
+        gravity +=0.1f;
+    }
+    if(ballv == MASS)
+    {
+        mass += 0.1f;
+    }
+    if(ballv == VELOCITY)
+    {
+        velocity += 0.1f;
+    }
+    if(ballv == RADIUS)
+    {
+        radius += 0.1f;
+    }
+}
+
+//function to decrease the values of the variables
+MinusValue()
+{
+    if(ballv == GRAVITY)
+    {
+        gravity -=0.1f;
+    }
+    if(ballv == MASS)
+    {
+        mass -= 0.1f;
+    }
+    if(ballv == VELOCITY)
+    {
+        velocity -= 0.1f;
+    }
+    if(ballv == RADIUS)
+    {
+        radius -= 0.1f;
+    }
+}
 
 void keyRelease(unsigned char key, int x, int y)
 {
     switch(key)
     {
+    case 49:
+        ballv = GRAVITY;
+        break;
+    case 50:
+        ballv = MASS;
+        break;
+    case 51:
+        ballv = VELOCITY;
+        break;
+    case 52:
+        ballv = RADIUS;
+        break;
+    case 43:
+    case 61:
+        AddValue();
+        break;
+    case 45:
+    case 95:
+        MinusValue();
+        break;
     case 'd':
     case 'D':
         right = 0;
@@ -363,8 +424,6 @@ void mouseClick(int button, int state, int x, int y)
         {
             setSphere(&sphereList[2], cam.cPos[0], cam.cPos[1], cam.cPos[2], 0.5f);
             setSphereVelocity(&sphereList[2],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
-            printf("\n camera x position: %f  y: %f  z: %f", cam.cCen[0],cam.cCen[1],cam.cCen[2]);
-            printf("\n camera viewing angles yRad: %f  Zrad: %f" , cam.yRad, cam.zRad);
         }
     }
 }
@@ -434,23 +493,23 @@ void displayText()
     int height = 24;
     char txt[32] = {0};
 
-    strcpy(txt, "Gravity: ");
+    strcpy(txt, "Gravity: 1");
     rendText(txt, len, 0, height);
     sprintf(txt, "%.2f\0", gravity);
     rendText(txt, len, 0, height);
 
-    strcpy(txt, "Initial Mass: ");
+    strcpy(txt, "Initial Mass: 2");
     rendText(txt, len, 0, height);
     sprintf(txt, "%.2f\0", mass);
     rendText(txt, len, 0, height);
 
-    strcpy(txt, "Initial Velocity: ");
+    strcpy(txt, "Initial Velocity: 3");
     rendText(txt, len, 0, height);
     sprintf(txt, "%.2f\0", velocity);
     rendText(txt, len, 0, height);
 
-    strcpy(txt, "Initial Radius: ");
-    rendText(txt, len, 0, height);
+    strcpy(txt, "Initial Radius: 4");
+    rendText(txt, len, 0, height+5);
     sprintf(txt, "%.2f\0", radius);
     rendText(txt, len, 0, height);
 }
@@ -468,23 +527,25 @@ displayBorders()
     glLoadIdentity();
 
     glLineWidth(5);
-    if(ballv == GRAVITY)
-    {
+    if(ballv == GRAVITY){ glTranslatef(0,0, 0); }
+    if(ballv == MASS){ glTranslatef(0,50, 0); }
+    if(ballv == VELOCITY){ glTranslatef(0,100, 0); }
+    if(ballv == RADIUS){ glTranslatef(0,150, 0); }
+
         glColor3f(0,0,0);
         glBegin(GL_LINES);
-            glVertex2f(5,5);
-            glVertex2f(5,55);
+            glVertex2f(5,7);
+            glVertex2f(5,57);
 
-            glVertex2f(100,55);
-            glVertex2f(100,5);
+            glVertex2f(180,57);
+            glVertex2f(180,7);
 
-            glVertex2f(5,5);
-            glVertex2f(100,5);
+            glVertex2f(5,7);
+            glVertex2f(180,7);
 
-            glVertex2f(5,55);
-            glVertex2f(100,55);
+            glVertex2f(5,57);
+            glVertex2f(180,57);
         glEnd();
-    }
 
 }
 
