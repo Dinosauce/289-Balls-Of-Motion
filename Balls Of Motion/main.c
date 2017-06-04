@@ -16,7 +16,7 @@
 Camera cam;
 Sphere camCollider;
 #define NUM_AABB  6
-#define NUM_SPHERE 5
+#define NUM_SPHERE 7
 AABB* aabbList;
 Sphere* sphereList;
 
@@ -36,12 +36,20 @@ int backward = 0;
 int left = 0;     //Sidewards movement velocity.
 int right = 0;
 
-// ====== Ball spawn variables
-float gravity = 9.8f;
-float mass = 1;
-float velocity = 5;
-float radius = 1;
-float energyLoss = 0.9;
+// ====== Ball spawn variables | Set using resetGameVars()
+void resetGameVars();
+float gravity;
+float mass;
+float velocity;
+float radius;
+float energyLoss;
+
+// === Ball increment values | Set using resetGameVars()
+float iGravity;
+float iMass;
+float iVelocity;
+float iRadius;
+//float iEnergyLoss = 0.9;
 
 int BallNumber = 2;
 enum BallVariables {GRAVITY, MASS, VELOCITY, RADIUS};
@@ -74,6 +82,8 @@ void myinit()
     glEnable(GL_DEPTH_TEST);
     setCam(&cam, 0.0, 1.7, 10.0, 75.0);
     setSphere(&camCollider, cam.cPos[0], cam.cPos[1], cam.cPos[2], 0.3);
+
+    resetGameVars();
 
     // Load Images
     image img;
@@ -284,24 +294,54 @@ void keyPress(unsigned char key, int x, int y)
         break;
     }
 }
+
+// Resets the game variables and incrementors to default
+void resetGameVars()
+{
+    gravity = 9.8f;
+    mass = 1;
+    velocity = 5;
+    radius = 1;
+    energyLoss = 0.9;
+
+    iGravity = 0.7f;
+    iMass = 1;
+    iVelocity = 0.5f;
+    iRadius = 0.05f;
+    //iEnergyLoss = ?;
+}
+
 //function to increase the values of the variables
 void AddValue()
 {
     if(ballv == GRAVITY)
     {
-        gravity +=0.1f;
+        gravity += iGravity;
     }
     if(ballv == MASS)
     {
-        mass += 0.1f;
+        mass += iMass;
     }
     if(ballv == VELOCITY)
     {
-        velocity += 0.1f;
+        // Upper limit
+        if (velocity + iVelocity <= 250)
+        {
+            // Improves usability greatly
+            if (velocity == 5)
+                iVelocity *= 2;
+            else if (velocity == 10)
+                iVelocity *= 5;
+            else if (velocity == 50)
+                iVelocity *= 10;
+
+            velocity += iVelocity;
+        }
     }
     if(ballv == RADIUS)
     {
-        radius += 0.1f;
+        if (radius + iRadius <= 4.5)
+            radius += iRadius;
     }
 }
 
@@ -310,27 +350,36 @@ void MinusValue()
 {
     if(ballv == GRAVITY)
     {
-        gravity -=0.1f;
+        gravity -= iGravity;
     }
     if(ballv == MASS)
     {
-        if(mass > 0.0)
+        if(mass - iMass > 0)
         {
-            mass -= 0.1f;
+            mass -= iMass;
         }
     }
     if(ballv == VELOCITY)
     {
-        if(velocity > 0.1)
+        // Allow dropping of the ball
+        if(velocity - iVelocity >= 0)
         {
-            velocity -= 0.1f;
+            velocity -= iVelocity;
+            // Improves usability greatly
+            if (velocity == 5)
+                iVelocity /= 2;
+            else if (velocity == 10)
+                iVelocity /= 5;
+            else if (velocity == 50)
+                iVelocity /= 10;
         }
     }
     if(ballv == RADIUS)
     {
-        if(radius > 0.0)
+        // Cant have a ball of 0 radius
+        if(radius - iRadius > 0.05)
         {
-            radius -= 0.1f;
+            radius -= iRadius;
         }
     }
 }
@@ -338,18 +387,19 @@ void MinusValue()
 //sets the balls initial variables to be thrown into the room and increments the ball count
 void throwBall()
 {
-    if(BallNumber !=5)
-    {
-        setSphere(&sphereList[BallNumber], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
-        setSphereVelocity(&sphereList[BallNumber],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
-        BallNumber++;
-    }
-    else
-    {
-        BallNumber = 0;
-        setSphere(&sphereList[2], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
-        setSphereVelocity(&sphereList[2],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
-    }
+    // if(BallNumber !=5)
+    // {
+    BallNumber %= NUM_SPHERE;
+    setSphere(&sphereList[BallNumber], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
+    setSphereVelocity(&sphereList[BallNumber],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
+    BallNumber++;
+    // }
+    // else
+    // {
+    //     BallNumber = 0;
+    //     setSphere(&sphereList[2], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
+    //     setSphereVelocity(&sphereList[2],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
+    // }
 
 }
 
@@ -357,29 +407,33 @@ void keyRelease(unsigned char key, int x, int y)
 {
     switch(key)
     {
-    case 49:
+    case 49: // 1
         ballv = GRAVITY;
         break;
-    case 50:
+    case 50: // 2
         ballv = MASS;
         break;
-    case 51:
+    case 51: // 3
         ballv = VELOCITY;
         break;
-    case 52:
+    case 52: // 4
         ballv = RADIUS;
         break;
-    case 43:
-    case 61:
+    case 43: // +
+    case 61: // =
         AddValue();
         break;
-    case 45:
-    case 95:
+    case 45: // -
+    case 95: // _
         MinusValue();
         break;
     case 'e':
     case 'E':
         throwBall();
+        break;
+    case 'r':
+    case 'R':
+        resetGameVars();
         break;
     case 'd':
     case 'D':
@@ -659,25 +713,34 @@ void ballColour(int s)
     switch(s)
     {
         case 0:
-            //red ball
-            glColor3f(1,0,0);
+            //blue
+            glColor3f(0, 0, 1);
             break;
         case 1:
-            //cyan ball
-            glColor3f(0,1,1);
+            //green
+            glColor3f(0, 1, 0);
             break;
         case 2:
-            //blue ball
-            glColor3f(0,0,1);
+            //cyan
+            glColor3f(0, 1, 1);
             break;
         case 3:
-            //yellow ball
-            glColor3f(1,1,0);
+            //red
+            glColor3f(1, 0, 0);
             break;
         case 4:
             //magenta ball
-            glColor3f(1,0,1);
+            glColor3f(1, 0, 1);
             break;
+        case 5:
+            //yellow
+            glColor3f(1, 1, 0);
+            break;
+        default:
+            //white
+            glColor3f(1, 1, 1);
+            break;
+
     }
 }
 
