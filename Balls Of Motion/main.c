@@ -309,15 +309,24 @@ void MinusValue()
     }
     if(ballv == MASS)
     {
-        mass -= 0.1f;
+        if(mass > 0.0)
+        {
+            mass -= 0.1f;
+        }
     }
     if(ballv == VELOCITY)
     {
-        velocity -= 0.1f;
+        if(velocity > 0.1)
+        {
+            velocity -= 0.1f;
+        }
     }
     if(ballv == RADIUS)
     {
-        radius -= 0.1f;
+        if(radius > 0.0)
+        {
+            radius -= 0.1f;
+        }
     }
 }
 
