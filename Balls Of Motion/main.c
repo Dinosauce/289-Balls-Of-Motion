@@ -37,12 +37,15 @@ int left = 0;     //Sidewards movement velocity.
 int right = 0;
 
 // ====== Ball spawn variables
-float velocity = 5;
-float mass = 1;
 float gravity = 9.8f;
+float mass = 1;
+float velocity = 5;
 float radius = 1;
 float energyLoss = 0.9;
 
+int BallNumber = 2;
+enum BallVariables {GRAVITY, MASS, VELOCITY, RADIUS};
+enum BallVariables ballv = GRAVITY;
 
 // ====== Camera movement
 int zRotate = 0;    //Z-Axiz rotation velocity.
@@ -281,11 +284,103 @@ void keyPress(unsigned char key, int x, int y)
         break;
     }
 }
+//function to increase the values of the variables
+void AddValue()
+{
+    if(ballv == GRAVITY)
+    {
+        gravity +=0.1f;
+    }
+    if(ballv == MASS)
+    {
+        mass += 0.1f;
+    }
+    if(ballv == VELOCITY)
+    {
+        velocity += 0.1f;
+    }
+    if(ballv == RADIUS)
+    {
+        radius += 0.1f;
+    }
+}
+
+//function to decrease the values of the variables
+void MinusValue()
+{
+    if(ballv == GRAVITY)
+    {
+        gravity -=0.1f;
+    }
+    if(ballv == MASS)
+    {
+        if(mass > 0.0)
+        {
+            mass -= 0.1f;
+        }
+    }
+    if(ballv == VELOCITY)
+    {
+        if(velocity > 0.1)
+        {
+            velocity -= 0.1f;
+        }
+    }
+    if(ballv == RADIUS)
+    {
+        if(radius > 0.0)
+        {
+            radius -= 0.1f;
+        }
+    }
+}
+
+//sets the balls initial variables to be thrown into the room and increments the ball count
+void throwBall()
+{
+    if(BallNumber !=5)
+    {
+        setSphere(&sphereList[BallNumber], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
+        setSphereVelocity(&sphereList[BallNumber],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
+        BallNumber++;
+    }
+    else
+    {
+        BallNumber = 0;
+        setSphere(&sphereList[2], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
+        setSphereVelocity(&sphereList[2],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
+    }
+
+}
 
 void keyRelease(unsigned char key, int x, int y)
 {
     switch(key)
     {
+    case 49:
+        ballv = GRAVITY;
+        break;
+    case 50:
+        ballv = MASS;
+        break;
+    case 51:
+        ballv = VELOCITY;
+        break;
+    case 52:
+        ballv = RADIUS;
+        break;
+    case 43:
+    case 61:
+        AddValue();
+        break;
+    case 45:
+    case 95:
+        MinusValue();
+        break;
+    case 'e':
+    case 'E':
+        throwBall();
+        break;
     case 'd':
     case 'D':
         right = 0;
@@ -301,7 +396,7 @@ void keyRelease(unsigned char key, int x, int y)
         break;
     case 's':
     case 'S':
-        backward = 0;
+    backward = 0;
         break;
     case 9: // Horizontal tab
     case 'i':
@@ -364,6 +459,7 @@ void specKeyRelease(int key, int x, int y)
     }
 }
 
+
 void mouseClick(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
@@ -371,6 +467,10 @@ void mouseClick(int button, int state, int x, int y)
         //Exit or left click when exit screen is shown
         if(showExit)
             exit(0);
+        else
+        {
+            throwBall();
+        }
     }
 }
 
@@ -408,7 +508,7 @@ void rendText(char* str, int len, int x, int y)
     glTranslatef(x, y, 0);
 
     //Set Bottom Right Raster Position
-    glRasterPos2d(0, 0);
+    glRasterPos2d(10, 5);
     int i;
     for (i = 0; str[i] != '\0' && i < len; i++)
     {
@@ -439,25 +539,91 @@ void displayText()
     int height = 24;
     char txt[32] = {0};
 
-    strcpy(txt, "Gravity: ");
+    strcpy(txt, "Gravity: 1");
     rendText(txt, len, 0, height);
     sprintf(txt, "%.2f\0", gravity);
     rendText(txt, len, 0, height);
 
-    strcpy(txt, "Initial Mass: ");
+    strcpy(txt, "Initial Mass: 2");
     rendText(txt, len, 0, height);
     sprintf(txt, "%.2f\0", mass);
     rendText(txt, len, 0, height);
 
-    strcpy(txt, "Initial Velocity: ");
+    strcpy(txt, "Initial Velocity: 3");
     rendText(txt, len, 0, height);
     sprintf(txt, "%.2f\0", velocity);
     rendText(txt, len, 0, height);
 
-    strcpy(txt, "Initial Radius: ");
-    rendText(txt, len, 0, height);
+    strcpy(txt, "Initial Radius: 4");
+    rendText(txt, len, 0, height+5);
     sprintf(txt, "%.2f\0", radius);
     rendText(txt, len, 0, height);
+}
+
+//displays a crosshair in the center of the screen
+void displayCrosshair()
+{
+    //changes the viewing perspective to 2D
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    glViewport(0, 0, windowWidth, windowHeight);
+    gluOrtho2D(0.0, windowWidth, windowHeight, 0);
+
+    glMatrixMode(GL_MODELVIEW);
+
+    glLoadIdentity();
+
+    //draws the border
+    glLineWidth(1);
+    glColor3f(0,0,0);
+    glBegin(GL_LINES);
+        glVertex2f(windowXcen,windowYcen+10);
+        glVertex2f(windowXcen,windowYcen-10);
+
+        glVertex2f(windowXcen+10,windowYcen);
+        glVertex2f(windowXcen-10,windowYcen);
+    glEnd();
+
+}
+
+//displays borders around the active variable field
+void displayBorders()
+{
+    //changes the viewing perspective to 2D
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    glViewport(0, 0, windowWidth, windowHeight);
+    gluOrtho2D(0.0, windowWidth, windowHeight, 0);
+
+    glMatrixMode(GL_MODELVIEW);
+
+    glLoadIdentity();
+
+    //moves the borders based on which variable is being altered
+    glLineWidth(5);
+    if(ballv == GRAVITY){ glTranslatef(0,0, 0); }
+    if(ballv == MASS){ glTranslatef(0,50, 0); }
+    if(ballv == VELOCITY){ glTranslatef(0,100, 0); }
+    if(ballv == RADIUS){ glTranslatef(0,150, 0); }
+
+    //draws the border
+    glColor3f(0,0,0);
+    glBegin(GL_LINES);
+        glVertex2f(5,7);
+        glVertex2f(5,57);
+
+        glVertex2f(180,57);
+        glVertex2f(180,7);
+
+        glVertex2f(5,7);
+        glVertex2f(180,7);
+
+        glVertex2f(5,57);
+        glVertex2f(180,57);
+    glEnd();
+
 }
 
 //Displays a square image, centered in the window (stretched)
@@ -485,6 +651,34 @@ void showImage(GLuint texID)
         displayImage(texID, 0, (windowHeight - windowWidth)/2, windowWidth, windowWidth);
 
     glutSwapBuffers();
+}
+
+//makes each ball within the room a different colour
+void ballColour(int s)
+{
+    switch(s)
+    {
+        case 0:
+            //red ball
+            glColor3f(1,0,0);
+            break;
+        case 1:
+            //cyan ball
+            glColor3f(0,1,1);
+            break;
+        case 2:
+            //blue ball
+            glColor3f(0,0,1);
+            break;
+        case 3:
+            //yellow ball
+            glColor3f(1,1,0);
+            break;
+        case 4:
+            //magenta ball
+            glColor3f(1,0,1);
+            break;
+    }
 }
 
 void display()
@@ -517,6 +711,7 @@ void display()
     int s;
     for (s=0; s<NUM_SPHERE; s++)
     {
+        ballColour(s);
         drawSphere(&sphereList[s]);
     }
 
@@ -531,6 +726,10 @@ void display()
     glPopMatrix();
 
     displayText();
+
+    displayBorders();
+
+    displayCrosshair();
 
     glutSwapBuffers();
 }
