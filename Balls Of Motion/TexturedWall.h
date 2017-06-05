@@ -42,9 +42,7 @@ void setFloor(TexturedWall* wall, float x, float y, float z, float xSize, float 
 void setWall(TexturedWall* wall, float x, float y, float z, float length, float height, axis direction);
 
 /// Sets the color of the wall (Disables textures)
-void setColor(TexturedWall* wall, float r, float g, float b);
-/// Sets the color of the wall to a random color (Disables textures)
-void setRandomColor(TexturedWall* wall);
+void setWallColor(TexturedWall* wall, float r, float g, float b);
 
 /** Sets the texture Id and properties for the wall, enabling textures.
  *  @param wall - wall to apply changes to.
@@ -52,7 +50,7 @@ void setRandomColor(TexturedWall* wall);
  *  @param verticleRep - the number of times to repeat the texture in the vertical direction (floor: x)
  *  @param lengthRatio - length to height ratio to apply to texture repetition (floor: x to z ratio)
  */
-void setTexture(TexturedWall* wall, GLuint textureID, float verticleRep, float lengthRatio);
+void setWallTexture(TexturedWall* wall, GLuint textureID, float verticleRep, float lengthRatio);
 
 /// Draws the wall using GL
 void drawWall(TexturedWall* wall);

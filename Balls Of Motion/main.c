@@ -120,9 +120,9 @@ void myinit()
     setFloor(&wallList[5], 16, 9.6, 12, -32, -24);
     int tx;
     for (tx = 0; tx < 4; tx ++)
-        setTexture(&wallList[tx], texWall, 5, (wallList[tx].length / wallList[tx].height) );
+        setWallTexture(&wallList[tx], texWall, 5, (wallList[tx].length / wallList[tx].height) );
     for (tx = 4; tx < 6; tx ++)
-        setTexture(&wallList[tx], texFloor, 5, 2.0f);//(wallList[tx].length / wallList[tx].height) );
+        setWallTexture(&wallList[tx], texFloor, 5, 2.0f);//(wallList[tx].length / wallList[tx].height) );
     //Set House Walls
     // -16 - 16
     // 0   - 9.6

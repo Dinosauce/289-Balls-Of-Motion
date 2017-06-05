@@ -14,7 +14,7 @@ void setFloor(TexturedWall* wall, float x, float y, float z, float xSize, float 
     wall->texVertRes = 1;
     wall->lenRatio = 1;
 
-    setRandomColor(wall);
+    setWallColor(wall, 1, 0 ,1);
 }
 
 void setWall(TexturedWall* wall, float x, float y, float z, float length, float height, axis direction)
@@ -35,28 +35,23 @@ void setWall(TexturedWall* wall, float x, float y, float z, float length, float 
     wall->texVertRes = 1;
     wall->lenRatio = 1;
 
-    setRandomColor(wall);
+    setWallColor(wall, 1, 1 ,1);
 }
 
-void setTexture(TexturedWall* wall, GLuint textureID, float verticleRep, float lengthRatio)
+void setWallTexture(TexturedWall* wall, GLuint textureID, float verticleRep, float lengthRatio)
 {
     wall->texId = textureID;
     wall->texVertRes = verticleRep;
     wall->lenRatio = lengthRatio;
 }
 
-void setColor(TexturedWall* wall, float r, float g, float b)
+void setWallColor(TexturedWall* wall, float r, float g, float b)
 {
     wall->texId = 0;
 
     wall->color[0] = r;
     wall->color[1] = g;
     wall->color[2] = b;
-}
-
-void setRandomColor(TexturedWall* wall)
-{
-    setColor(wall, (float)(rand() % 255) / 255, (float)(rand() % 255) / 255, (float)(rand() % 255) / 255);
 }
 
 void drawWall(TexturedWall* wall)
