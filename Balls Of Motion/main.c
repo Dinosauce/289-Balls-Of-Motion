@@ -58,7 +58,7 @@ int BallNumber = 2;
 enum BallVariables {GRAVITY, MASS, VELOCITY, RADIUS};
 enum BallVariables ballv = GRAVITY;
 
-int mouseFunc = 0;  //Determines whether the mouse is in control of the camera.
+int paused = 0;  //Determines whether the mouse is in control of the camera.
 
 // ====== Window
 int windowWidth = 1280;  //Windows width
@@ -183,9 +183,9 @@ void mouseMove(int x, int y)
 
 void toggleMouse()
 {
-    mouseFunc = !mouseFunc;
+    paused = !paused;
 
-    if (mouseFunc)
+    if (paused)
     {
         glutWarpPointer(windowXcen, windowYcen);
         glutPassiveMotionFunc(mouseMove);
@@ -542,7 +542,12 @@ void mouseClick(int button, int state, int x, int y)
     {
         //Exit or left click when exit screen is shown
         if(showExit)
+        {
             exit(0);
+            free(sphereList);
+            free(aabbList);
+            free(wallList);
+        }
         else
         {
             throwBall();
@@ -553,17 +558,20 @@ void mouseClick(int button, int state, int x, int y)
 // Must be called after glLoadIdentity() and before drawing in perspective.
 void updateCamera()
 {
-    if (mouseX != windowXcen || mouseY != windowYcen)
+    if (paused)
     {
-        rotateCameraZ(&cam, (float) (mouseX - windowXcen) / 40.0);
-        rotateCameraY(&cam, (float) (windowYcen - mouseY) / 40.0);
+        if (mouseX != windowXcen || mouseY != windowYcen)
+        {
+            rotateCameraZ(&cam, (float) (mouseX - windowXcen) / 40.0);
+            rotateCameraY(&cam, (float) (windowYcen - mouseY) / 40.0);
 
-        glutWarpPointer(windowXcen, windowYcen);
-    }
-    else
-    {
-        rotateCameraZ(&cam, zRotate);
-        rotateCameraY(&cam, yRotate);
+            glutWarpPointer(windowXcen, windowYcen);
+        }
+        else
+        {
+            rotateCameraZ(&cam, zRotate);
+            rotateCameraY(&cam, yRotate);
+        }
     }
 
     moveCam(&cam, forward - backward, right - left);
