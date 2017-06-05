@@ -129,16 +129,18 @@ void myinit()
     // -12 - 12
     aabbList = malloc(NUM_AABB * (sizeof(*aabbList)));
 
+    // These only extend behind the wall, and do not cover the corners well
+    //X
     setAABB(&aabbList[0],-26, 0, -12, -16, 9.6, 12);
     setNormal(&aabbList[0], 1, 0, 0);
     setAABB(&aabbList[1],16, 0, -12, 26, 9.6, 12);
     setNormal(&aabbList[1], -1, 0, 0);
-
+    //Y
     setAABB(&aabbList[2],-16, -10, -12, 16, 0, 12);
     setNormal(&aabbList[2], 0, 1, 0);
     setAABB(&aabbList[3],-16, 9.6, -12, 16, 19.6, 12);
     setNormal(&aabbList[3], 0, -1, 0);
-
+    //Z
     setAABB(&aabbList[4],-16, 0, -22, 16, 9.6, -12);
     setNormal(&aabbList[4], 0, 0, 1);
     setAABB(&aabbList[5],-16, 0, 12, 16, 9.6, 22);
