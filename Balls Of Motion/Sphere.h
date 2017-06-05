@@ -38,6 +38,4 @@ typedef struct{
     /// Renders the sphere
     void drawSphere(Sphere* s);
 
-    //void drawSphere(int slices);
-
 #endif // SPHERE_H

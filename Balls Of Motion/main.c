@@ -129,19 +129,19 @@ void myinit()
     // -12 - 12
     aabbList = malloc(NUM_AABB * (sizeof(*aabbList)));
 
-    setAABB(&aabbList[0],-18, 0, -12, -16, 9.6, 12);
+    setAABB(&aabbList[0],-26, 0, -12, -16, 9.6, 12);
     setNormal(&aabbList[0], 1, 0, 0);
-    setAABB(&aabbList[1],16, 0, -12, 18, 9.6, 12);
+    setAABB(&aabbList[1],16, 0, -12, 26, 9.6, 12);
     setNormal(&aabbList[1], -1, 0, 0);
 
-    setAABB(&aabbList[2],-16, -2, -12, 16, 0, 12);
+    setAABB(&aabbList[2],-16, -10, -12, 16, 0, 12);
     setNormal(&aabbList[2], 0, 1, 0);
-    setAABB(&aabbList[3],-16, 9.6, -12, 16, 11.6, 12);
+    setAABB(&aabbList[3],-16, 9.6, -12, 16, 19.6, 12);
     setNormal(&aabbList[3], 0, -1, 0);
 
-    setAABB(&aabbList[4],-16, 0, -14, 16, 9.6, -12);
+    setAABB(&aabbList[4],-16, 0, -22, 16, 9.6, -12);
     setNormal(&aabbList[4], 0, 0, 1);
-    setAABB(&aabbList[5],-16, 0, 12, 16, 9.6, 14);
+    setAABB(&aabbList[5],-16, 0, 12, 16, 9.6, 22);
     setNormal(&aabbList[5], 0, 0, -1);
 
     // Initialize Test Spheres
