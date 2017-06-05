@@ -78,7 +78,7 @@ void myinit()
 {
     ///Init =========================
     //setLight();
-    glClearColor(0.8, 0.9, 1.0, 1.0); /* draw on white background */
+    glClearColor(0.3, 0.3, 0.3, 1.0);
     glEnable(GL_DEPTH_TEST);
     setCam(&cam, 0.0, 1.7, 10.0, 75.0);
     setSphere(&camCollider, cam.cPos[0], cam.cPos[1], cam.cPos[2], 0.3);
