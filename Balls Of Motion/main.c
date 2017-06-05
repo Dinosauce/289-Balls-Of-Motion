@@ -87,13 +87,13 @@ void myinit()
 
     // Load Images
     image img;
-    img.data = loadRaw("Content/Exit.raw", 640, 640);
-    img.width = 640;
-    img.height = 640;
+    img.data = loadRaw("Content/Exit.raw", 720, 720);
+    img.width = 720;
+    img.height = 720;
     allocateImage(&img, &texExit);
     free(img.data);
 
-    img.data = loadRaw("Content/Help.raw", 640, 640);
+    img.data = loadRaw("Content/Help.raw", 720, 720);
     allocateImage(&img, &texMenu);
     free(img.data);
 
