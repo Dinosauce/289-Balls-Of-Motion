@@ -89,7 +89,12 @@ void rotateCameraY(Camera* cam, double vel)
     }
 }
 
-void increaseMovespeed(Camera* cam, double dSpeed)
+void setMoveSpeed(Camera* cam, double nSpeed)
 {
-    cam->moveSpeed += dSpeed;
+    cam->moveSpeed = nSpeed;
+}
+
+void setRotateSpeed(Camera* cam, double nSpeed)
+{
+    cam->rotateSpeed = nSpeed;
 }

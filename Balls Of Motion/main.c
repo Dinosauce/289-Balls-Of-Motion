@@ -35,6 +35,9 @@ int forward = 0;       //Forward movement velocity.
 int backward = 0;
 int left = 0;     //Sidewards movement velocity.
 int right = 0;
+// ====== Camera movement
+int zRotate = 0;    //Horizontal rotation velocity.
+int yRotate = 0;    //Verticle rotation velocity.
 
 // ====== Ball spawn variables | Set using resetGameVars()
 void resetGameVars();
@@ -54,10 +57,6 @@ float iRadius;
 int BallNumber = 2;
 enum BallVariables {GRAVITY, MASS, VELOCITY, RADIUS};
 enum BallVariables ballv = GRAVITY;
-
-// ====== Camera movement
-int zRotate = 0;    //Z-Axiz rotation velocity.
-int yRotate = 0;    //Y-Axiz rotation velocity.
 
 int mouseFunc = 0;  //Determines whether the mouse is in control of the camera.
 
@@ -81,6 +80,7 @@ void myinit()
     glClearColor(0.3, 0.3, 0.3, 1.0);
     glEnable(GL_DEPTH_TEST);
     setCam(&cam, 0.0, 1.7, 10.0, 75.0);
+    setRotateSpeed(&cam, 0.02);
     setSphere(&camCollider, cam.cPos[0], cam.cPos[1], cam.cPos[2], 0.3);
 
     resetGameVars();
@@ -553,10 +553,10 @@ void mouseClick(int button, int state, int x, int y)
 // Must be called after glLoadIdentity() and before drawing in perspective.
 void updateCamera()
 {
-    if (mouseFunc)
+    if (mouseX != windowXcen || mouseY != windowYcen)
     {
-        rotateCameraZ(&cam, (float) (mouseX - windowXcen) / 80.0);
-        rotateCameraY(&cam, (float) (windowYcen - mouseY) / 80.0);
+        rotateCameraZ(&cam, (float) (mouseX - windowXcen) / 40.0);
+        rotateCameraY(&cam, (float) (windowYcen - mouseY) / 40.0);
 
         glutWarpPointer(windowXcen, windowYcen);
     }
@@ -660,6 +660,8 @@ void displayCrosshair()
         glVertex2f(windowXcen+10,windowYcen);
         glVertex2f(windowXcen-10,windowYcen);
     glEnd();
+
+
 
 }
 

@@ -66,12 +66,19 @@
      */
     void rotateCameraY(Camera* cam, double vel);
 
-    /** \brief Increases the camera's move speed by the given value.
+    /** \brief Sets the camera's move speed to the given value.
      *
      * \param cam (Camera*) - The camera to adjust.
-     * \param dSpeed - The amount to increase the camera speed by.
+     * \param nSpeed - The new movement speed.
      */
-    void increaseMovespeed(Camera* cam, double dSpeed);
+    void setMoveSpeed(Camera* cam, double nSpeed);
+
+    /** \brief Sets the camera's rotation speed to the given value.
+     *
+     * \param cam (Camera*) - The camera to adjust.
+     * \param nSpeed - The new rotation speed.
+     */
+    void setRotateSpeed(Camera* cam, double nSpeed);
 
 
 
