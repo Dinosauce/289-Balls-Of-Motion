@@ -304,7 +304,7 @@ void resetGameVars()
     radius = 1;
     energyLoss = 0.9;
 
-    iGravity = 0.7f;
+    iGravity = 1.0f;
     iMass = 1;
     iVelocity = 0.5f;
     iRadius = 0.05f;
@@ -316,7 +316,18 @@ void AddValue()
 {
     if(ballv == GRAVITY)
     {
-        gravity += iGravity;
+        if(gravity>8.9 && gravity <9.1)
+        {
+            gravity = 9.8f;
+        }
+        else if(gravity > 9.7 && gravity <9.9)
+        {
+            gravity = 10.0f;
+        }
+        else
+        {
+            gravity += iGravity;
+        }
     }
     if(ballv == MASS)
     {
@@ -350,7 +361,18 @@ void MinusValue()
 {
     if(ballv == GRAVITY)
     {
-        gravity -= iGravity;
+        if(gravity>9.7 && gravity <9.9)
+        {
+            gravity = 9.0f;
+        }
+        else if(gravity>9.95 && gravity < 10.1)
+        {
+            gravity = 9.8f;
+        }
+        else
+        {
+            gravity -= iGravity;
+        }
     }
     if(ballv == MASS)
     {
