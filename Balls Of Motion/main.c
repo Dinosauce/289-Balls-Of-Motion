@@ -800,12 +800,6 @@ void display()
 
     updateCamera();
 
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    //glLineWidth(10.0);
-
-
-    //TODO: Give each individual sphere a color. Random on spawn??? (if not textured)
-    glColor3d(0.2, 0.5, 1.0);
     int s;
     for (s=0; s<NUM_SPHERE; s++)
     {
@@ -814,13 +808,9 @@ void display()
     }
 
     glPushMatrix();
-        //glScalef(8,4,4);
-        //drawHouse();
         int w;
         for (w=0; w<NUM_WALLS; w++)
-        {
             drawWall(&wallList[w]);
-        }
     glPopMatrix();
 
     displayText();
