@@ -416,6 +416,7 @@ void throwBall()
     BallNumber %= NUM_SPHERE;
     setSphere(&sphereList[BallNumber], cam.cPos[0], cam.cPos[1], cam.cPos[2], radius);
     setSphereVelocity(&sphereList[BallNumber],  (cam.cCen[0]-cam.cPos[0])*velocity,(cam.cCen[1]-cam.cPos[1])*velocity,(cam.cCen[2]-cam.cPos[2])*velocity);
+    setSphereMass(&sphereList[BallNumber], mass);
     BallNumber++;
     // }
     // else
