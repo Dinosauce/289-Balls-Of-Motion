@@ -50,7 +50,7 @@ void resolveSA(Sphere* s, AABB* aabb)
 void resolveSS(Sphere* s1, Sphere* s2)
 {
     float d = distance(s1->center, s2->center);
-    float n[3]; // x,y and z normal (from s2 -> s1)
+    vect3 n; // x,y and z normal (from s2 -> s1)
     int i;
 
     // Sets the collision normal
@@ -60,9 +60,7 @@ void resolveSS(Sphere* s1, Sphere* s2)
     }
 
     // calculate p-value
-    float p = 2 * ((s1->direction[0] * n[0] + s1->direction[1] * n[1] + s1->direction[2] * n[2]) -
-                   (s2->direction[0] * n[0] + s2->direction[1] * n[1] + s2->direction[2] * n[2])) /
-                   (s1->mass + s2->mass);
+    float p = 2 * (dot(s1->direction, n) - dot(s2->direction, n)) / (s1->mass + s2->mass);
 
     // Calculate / set new velocity for each sphere
     for (i = 0; i< 3; i++)
